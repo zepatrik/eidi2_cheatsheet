@@ -49,7 +49,10 @@ licence CC BY-SA
     \subsection{WP}
     \begin{align*}
       \WP{x = read();}(B) &\equiv \forall x.B \\
-      I \Rightarrow \WP{b}(B_0, B_1) &\equiv I \Rightarrow (((\neg b) \Rightarrow B_0) \land (b \Rightarrow B_1))
+      I \Rightarrow \WP{b}(B_0, B_1) &\equiv I \Rightarrow (((\neg b) \Rightarrow B_0) \land (b \Rightarrow B_1)) \\
+      \WP{b}(B_0, B_1) &\equiv (b \lor B_0) \land (\neg b \lor B_1) \\
+      &\equiv (\neg b \land B_0) \lor (b \land B_1) \lor (B_0 \land B_1) \\
+      &\equiv (\neg b \land B_0) \lor (b \land B_1)
     \end{align*}
     \subsection{Terminierung}
     \begin{enumerate}
@@ -99,6 +102,34 @@ module Ext(X: A) = struct
 end
 
 module C = Ext (B)
+    \end{minted}
+    \subsection{Threaded tree Beispiel}
+    \begin{minted}{ocaml}
+open Thread open Event
+
+let rec min = function
+  | Leaf a -> a
+  | Node (a,b) ->
+    let c = new_channel () in
+    let f t = sync (send c (min t)) in
+    let _ = create f a in
+    let _ = create f b in
+    let x = sync (receive c) in
+    let y = sync (receive c) in
+    if x < y then x else y
+    \end{minted}
+    \subsection{Exceptions}
+    \begin{minted}{ocaml}
+type t = exn
+
+try (
+  raise Failure "this should fail"
+) with Failure s -> print_string s
+
+exeption Custom of int
+try (
+  raise Custom 0
+) with _ -> ()
     \end{minted}
     
   \end{multicols*}
