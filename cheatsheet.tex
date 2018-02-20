@@ -131,6 +131,56 @@ try (
   raise Custom 0
 ) with _ -> ()
     \end{minted}
+    \subsection{Invarianten Tipps}
+    \begin{enumerate}
+     \item Wir benötigen eine Aussage über den Wert der Variablen, über die
+wir etwas beweisen wollen (x) in der Schleifeninvariante. Die
+Aussage muss dabei mindestens so präzise ($\neq, \geq, \leq, =$) sein, wie
+die Aussage, die wir beweisen wollen.
+      \item Variablen, die an der Berechnung von x beteiligt sind \textbf{und} Werte
+von einer Schleifeniteration in die nächste transportieren
+(“loop-carried”), müssen in die Schleifeninvariante aufgenommen
+werden.
+      \item Die Schleife zu verstehen ist unerlässlich. Eine Tabelle für einige
+Schleifendurchläufe kann helfen die Zusammenhänge der Variablen
+(insbesondere mit dem Schleifenzähler $i$) aufzudecken. Oft lassen
+sich mit einer Tabelle, in der man die einzelnen
+Berechnungsschritte notiert, diese Zusammenhänge deutlich
+leichter erkennen, als mit einer Tabelle, die nur konkrete Werte
+enthält.
+      \item Die Variablen, die zur Berechnung von $x$ im Beweisziel verwendet
+werden und diejenigen, die dazu in der Invariante verwendet
+werden, müssen in Beziehung stehen. Wenn diese Beziehung nicht
+aus der Verzweigungsbedingung folgt, müssen weitere Aussagen
+zur Invariante hinzugefügt werden.
+      \item Bei einer Bedingung mit Ungleichung ($<, \leq, >, \geq$) kann der
+Schleifenzähler ($i$) von der anderen Seite ($\geq, \leq$) begrenzt werden,
+sodass am Ende der Schleife Gleichheit folgt. Natürlich darf das
+nur dann geschehen, wenn diese Begrenzung im Programm auch
+tatsächlich gilt.
+      \item Werden Programmeingaben begrenzt, z.B. durch Ziehen von
+Beträgen, vorzeitigen Programmabbruch bei unerwünschten
+Eingaben oder durch gegebene Zusicherungen, so kann die
+Information über die Werte der Eingabevariablen ($n, m, ...$), die
+innerhalb der Schleife zulässig sind, in der Invariante sinnvoll sein.
+      \item Existiert kein klassischer Schleifenzähler, kann ein gedanklicher
+Zähler verwendet werden um den Zusammenhang zwischen den
+Variablen herzustellen.
+      \item Sind in der Schleife Verzweigungen enthalten, so hängt $x$, neben
+dem Schleifenzähler, meist auch von einer Variablen ab, die in der
+Bedingung der Verzweigung vorkommt. In der Invariante muss
+diese Abhängigkeit dann aufgenommen werden. Lässt sich keine
+“einfache” Beziehung finden, so kann in der Invariante eine
+Fallunterscheidung verwendet werden.
+      \item In einem Terminierungsbeweis wird eine Aussage über $r$ in der
+Invariante benötigt. Es gilt dabei immer die für $r$ ermittelte
+Berechnungsvorschrift.
+      \item Für die Terminierung benötigen wir Aussagen über alle Variablen in
+der Invarianten, die für die Berechnung von $r$ benötigt werden und
+über die sich keine starken Beziehungen aus der Schleifenbedingung
+folgern lassen (wobei “stark” hier mindestens $\leq, \geq$ meint).
+    \end{enumerate}
+
     
   \end{multicols*}
 \end{document}
