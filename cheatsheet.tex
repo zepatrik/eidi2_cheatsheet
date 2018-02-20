@@ -90,23 +90,19 @@ module type A = sig
   type t
   val f : t -> t
 end
-
 module B: A = struct
   type t = int
   let f x = x + 1
 end
-
 module Ext(X: A) = struct
   include X
   let g x = f (f x)
 end
-
 module C = Ext (B)
     \end{minted}
     \subsection{Threaded tree Beispiel}
     \begin{minted}{ocaml}
 open Thread open Event
-
 let rec min = function
   | Leaf a -> a
   | Node (a,b) ->
@@ -121,16 +117,55 @@ let rec min = function
     \subsection{Exceptions}
     \begin{minted}{ocaml}
 type t = exn
-
 try (
   raise Failure "this should fail"
 ) with Failure s -> print_string s
-
 exeption Custom of int
 try (
   raise Custom 0
 ) with _ -> ()
     \end{minted}
+    \subsection{Lazy List}
+    \begin{minted}{ocaml}
+type 'a llist = Cons of 'a * (unit -> a' llist)
+let rec lconst n = Cons (n, fun () -> lconst n)
+let rec lseq s = Cons (s, fun () -> lseq (s+1))
+let lpowers2 () =
+  let rec impl n = Cons (n, fun () -> impl (2*n))
+  in impl 1
+let lhd (Cons (h, _)) = h
+let ltl (Cons (_, t)) = t ()
+let rec ltake n (Cons (h, t)) =
+  if n = 0 then [] else h :: ltake (n-1) (t ())
+let rec ldrop n (Cons (h, t)) =
+  if n = 0 then Cons (h, t) else ldrop (n-1) (t ())
+let rec lfilter f (Cons (h, t)) =
+  if f h then Cons (h, fun () -> lfilter f (t ()))
+    else lfilter f (t ())
+let rec lmap f (Cons (h, t)) =
+  Cons (f h, fun () -> lmap f (t ()))
+    \end{minted}
+    \subsection{Future}
+    \begin{minted}{ocaml}
+module Future = struct
+  open Event
+  type 'a t = 'a channel
+  let create f a =
+    let c = new_channel () in
+    let rec loop f = 
+	f (); 
+	loop f 
+    in
+    let task () =
+      let b = f a in
+      loop (fun () -> sync (send c b))
+    in
+    let _ = Thread.create task () in
+    c
+  let get c = sync (receive c)
+end
+    \end{minted}
+    
     \subsection{Invarianten Tipps}
     \begin{enumerate}
      \item Wir benötigen eine Aussage über den Wert der Variablen, über die
