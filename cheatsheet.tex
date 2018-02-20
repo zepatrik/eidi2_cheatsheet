@@ -11,6 +11,9 @@
 \usepackage[left=1cm,right=1cm,top=1cm,bottom=1cm]{geometry}
 \usepackage{hyperref}
 \usepackage{stmaryrd}
+\usepackage{tikz}
+
+\usetikzlibrary{calc,positioning,shapes}
 
 \newcommand{\semT}[1]{\llbracket{}\texttt{#1}\rrbracket{}}
 \newcommand{\WP}[1]{\textsf{WP}\semT{#1}}
@@ -24,7 +27,7 @@ licence CC BY-SA
   \maketitle
   \newpage
   
-  \begin{multicols*}{4}
+  \begin{multicols*}{3}
     \section{Logik}
     \begin{align*}
       \neg (A \lor B) &\equiv \neg A \land B \\
@@ -35,8 +38,37 @@ licence CC BY-SA
     \section{Verifikation}
     \subsection{WP}
     \begin{align*}
-      \WP{x = read();}(B) &\equiv \forall x.B
+      \WP{x = read();}(B) &\equiv \forall x.B \\
+      I \Rightarrow \WP{b}(B_0, B_1) &\equiv I \Rightarrow (((\neg b) \Rightarrow B_0) \land (b \Rightarrow B_1))
     \end{align*}
+    \subsection{Terminierung}
+    \begin{enumerate}
+      \item vor jedem Schleifendurchlauf \texttt{r > 0}
+      \item \texttt{r} wird bei jedem Durchlauf kleiner
+    \end{enumerate}
+    
+    \begin{tikzpicture}[
+    node distance=2em,
+    font=\ttfamily,
+    rect/.style={rectangle,draw},
+    diam/.style={diamond,draw,aspect=2}
+    ]
+      \node[rect] (1) {r = x + y;};
+      \node[above=of 1,yshift=-1em] (0) {};
+      \node[diam,below=of 1] (2) {x != y};
+      \node[rect,right=of 2] (3) {assert(y > 0);};
+      \node[diam,below=of 3] (4) {x < y};
+      \node[rect,below left=of 4] (5) {x = x - y;};
+      \node[rect,below right=of 4] (6) {y = y - x;};
+      \node[rect,below=of 4,yshift=-1.75em] (7) {assert(y > \textcolor{blue}{x + y});};
+      \node[rect,below=of 7] (8) {y = \textcolor{blue}{x + y};};
+      \node[left=of 2,xshift=1em] (exit) {};
+      
+      \draw[->] (0) edge (1) (1) edge (2) (3) edge (4) (7) edge (8);
+      \path[draw,->] (4) -| node[above] {no} (5) (4) -| node [above] {yes} (6) (2) -- node [above] {yes} (3) (2) -- node[above] {no} (exit);
+      \draw[->,to path={|- (\tikztotarget)}] (5) edge (7) (6) edge (7);
+      \path[draw,->] (8) -| (2);
+    \end{tikzpicture}
     
   \end{multicols*}
 \end{document}
