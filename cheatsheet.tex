@@ -13,11 +13,13 @@
 \usepackage{stmaryrd}
 \usepackage{tikz}
 \usepackage{titlesec}
+\usepackage{minted}
 
 \usetikzlibrary{calc,positioning,shapes}
 
 \newcommand{\semT}[1]{\llbracket{}\texttt{#1}\rrbracket{}}
 \newcommand{\WP}[1]{\textsf{WP}\semT{#1}}
+\newcommand{\ocaml}[1]{\mintinline{ocaml}{#1}}
 
 \title{EIDI 2 Cheatsheet}
 \author{github contributors: \url{https://github.com/zepatrik/eidi2_cheatsheet} \\
@@ -77,6 +79,27 @@ licence CC BY-SA
       \draw[->,to path={|- (\tikztotarget)}] (5) edge (7) (6) edge (7);
       \path[draw,->] (8) -| (2);
     \end{tikzpicture}
+    
+    \section{ocaml}
+    \subsection{Funktoren}
+    \begin{minted}{ocaml}
+module type A = sig
+  type t
+  val f : t -> t
+end
+
+module B: A = struct
+  type t = int
+  let f x = x + 1
+end
+
+module Ext(X: A) = struct
+  include X
+  let g x = f (f x)
+end
+
+module C = Ext (B)
+    \end{minted}
     
   \end{multicols*}
 \end{document}
