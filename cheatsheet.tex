@@ -10,6 +10,10 @@
 \usepackage{multicol}
 \usepackage[left=1cm,right=1cm,top=1cm,bottom=1cm]{geometry}
 \usepackage{hyperref}
+\usepackage{stmaryrd}
+
+\newcommand{\semT}[1]{\llbracket{}\texttt{#1}\rrbracket{}}
+\newcommand{\WP}[1]{\textsf{WP}\semT{#1}}
 
 \title{EIDI 2 Cheatsheet}
 \author{github contributors: \url{https://github.com/zepatrik/eidi2_cheatsheet} \\
@@ -23,14 +27,16 @@ licence CC BY-SA
   \begin{multicols*}{4}
     \section{Logik}
     \begin{align*}
-      \neg (A \lor B) \equiv \neg A \land B \\
-      A \lor (B \land A) \equiv A \land (B \lor A) \equiv A \\
-      A \implies B \equiv \neg A \lor B
+      \neg (A \lor B) &\equiv \neg A \land B \\
+      A \lor (B \land A) &\equiv A \land (B \lor A) \equiv A \\
+      A \implies B &\equiv \neg A \lor B
     \end{align*}
     
     \section{Verifikation}
-    
-    
+    \subsection{WP}
+    \begin{align*}
+      \WP{x = read();}(B) &\equiv \forall x.B
+    \end{align*}
     
   \end{multicols*}
 \end{document}
